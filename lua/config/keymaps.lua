@@ -1,73 +1,458 @@
-local discipline = require("rivtian.discipline")
+local mode_all = { "n", "v", "i" }
+local mode_nv = { "n", "v" }
+local mode_v = { "v" }
+local mode_i = { "i" }
+local mode_ni = { "n", "i" }
 
-discipline.cowboy()
+local nmappings = {
+  -- page scroll
+  -- {
+  --
+  --   from = "<c-i>",
+  --   to = "<c-d>",
+  --   mode = mode_nv,
+  -- },
+  -- { from = "Q", to = ":bd<CR>" },
+  {
+    from = ";",
+    to = ":",
+    mode = mode_nv,
+  },
+  { from = "y", to = '"+y' },
+  { from = "y", to = '"+ygv<esc>', mode = mode_v },
+  {
+    from = "`",
+    to = "~",
+    mode = mode_nv,
+  },
 
-local keymap = vim.keymap
-local opts = { noremap = true, silent = true }
+  {
+    from = "<C-i>",
+    to = "<C-d>",
+    mode = mode_nv,
+  },
+  {
+    from = "-",
+    to = "<C-x>",
+  },
+  {
+    from = "=",
+    to = "<C-a>",
+  },
+  {
+    from = "<C-;>",
+    to = "<Right>",
+    mode = mode_i,
+  },
+  -- { from = "jj",
+  --   to = "<ESC>",
+  --   mode = mode_i,
+  -- },
+  -- {
+  --   from = "jk",
+  --   to = "<ESC>",
+  --   mode = mode_i,
+  -- },
+  {
+    from = "X",
+    to = "r",
+  },
+  {
+    from = "r",
+    to = "<c-r>",
+  },
+  --
 
--- Do things without affecting the registers
-keymap.set("n", "x", '"_x')
-keymap.set("n", "<Leader>p", '"0p')
-keymap.set("n", "<Leader>P", '"0P')
-keymap.set("v", "<Leader>p", '"0p')
-keymap.set("n", "<Leader>c", '"_c')
-keymap.set("n", "<Leader>C", '"_C')
-keymap.set("v", "<Leader>c", '"_c')
-keymap.set("v", "<Leader>C", '"_C')
-keymap.set("n", "<Leader>d", '"_d')
-keymap.set("n", "<Leader>D", '"_D')
-keymap.set("v", "<Leader>d", '"_d')
-keymap.set("v", "<Leader>D", '"_D')
+  {
+    from = "cw",
+    to = '"_ciw',
+  },
+  {
+    from = "!",
+    to = "%",
+    mode = mode_nv,
+  },
+  {
+    from = "0",
+    to = "^",
+  },
+  {
+    from = ")",
+    to = "g_",
+  },
+  {
+    from = "p",
+    to = "P",
+    mode = mode_v,
+  },
+  {
+    from = "x",
+    to = '"_x',
+  },
+  {
+    from = "x",
+    to = '"_x',
+    mode = mode_v,
+  },
+  {
+    from = "c",
+    to = '"_c',
+  },
+  {
+    from = "c",
+    to = '"_c',
+    mode = mode_v,
+  },
 
--- Increment/decrement
-keymap.set("n", "+", "<C-a>")
-keymap.set("n", "-", "<C-x>")
+  -- undo
+  {
+    from = "<C-z>",
+    to = "<ESC>ua",
+    mode = mode_i,
+  },
+  {
+    from = " ",
+    to = " <C-g>u",
+    mode = mode_i,
+  },
+  {
+    from = "(",
+    to = "(<c-g>u",
+    mode = mode_i,
+  },
+  {
+    from = ")",
+    to = ")<C-g>u",
+    mode = mode_i,
+  },
+  {
+    from = "<",
+    to = "<<C-g>u",
+    mode = mode_i,
+  },
+  {
+    from = ">",
+    to = "><C-g>u",
+    mode = mode_i,
+  },
+  {
+    from = "/",
+    to = "/<C-g>u",
+    mode = mode_i,
+  },
+  {
+    from = "=",
+    to = "=<C-g>u",
+    mode = mode_i,
+  },
+  --
+  -- { from = "<leader>rc", to = ":e ~/.config/nvim/init.lua<CR>" },
 
--- Delete a word backwards
-keymap.set("n", "dw", 'vb"_d')
+  -- map , .
+  {
+    from = ",",
+    to = "<c-o>",
+  },
+  {
+    from = ".",
+    to = "<c-i>",
+  },
+  {
+    from = ",",
+    to = "^",
+    mode = mode_v,
+  },
+  {
+    from = ".",
+    to = "g_",
+    mode = mode_v,
+  },
+  {
+    from = "'",
+    to = ".",
+    mode = mode_nv,
+  },
+  {
+    from = "J",
+    to = "<nop>",
+  },
 
--- Select all
-keymap.set("n", "<C-a>", "gg<S-v>G")
+  {
+    from = "<leader>tc",
+    to = function()
+      vim.cmd([[tabclose]])
+    end,
+    desc = "Tab close",
+  },
 
--- Save with root permission (not working for now)
---vim.api.nvim_create_user_command('W', 'w !sudo tee > /dev/null %', {})
+  -- vscode like mapping
+  {
+    from = "<S-up>",
+    to = "Vk",
+  },
+  {
+    from = "<S-down>",
+    to = "Vj",
+  },
+  {
+    from = "<S-Left>",
+    to = "vh",
+  },
+  {
+    from = "<S-Right>",
+    to = "vl",
+  },
+  {
+    from = "<S-up>",
+    to = "k",
+    mode = mode_v,
+  },
+  {
+    from = "<S-down>",
+    to = "j",
+    mode = mode_v,
+  },
+  {
+    from = "<S-left>",
+    to = "h",
+  },
+  {
+    from = "<S-right>",
+    to = "l",
+  },
+  -- cursor move panel
+  {
+    from = "<leader><up>",
+    to = "<C-w>k",
+  },
+  {
+    from = "<leader><down>",
+    to = "<C-w>j",
+  },
+  {
+    from = "<leader><left>",
+    to = "<C-w>h",
+  },
+  {
+    from = "<leader><right>",
+    to = "<C-w>l",
+  },
+}
 
--- Disable continuations
-keymap.set("n", "<Leader>o", "o<Esc>^Da", opts)
-keymap.set("n", "<Leader>O", "O<Esc>^Da", opts)
+-- vscode like mapping based on kitty keymap mapping
+if vim.g.vscode == nil then
+  nmappings = vim.list_extend(nmappings, {
+    {
+      from = "<D-x>",
+      to = '"+di',
+      mode = mode_v,
+    },
+    {
+      from = "<D-d>",
+      to = "viw",
+    },
+    {
+      from = "<D-x>",
+      to = '"+dd',
+    },
+    {
 
--- Jumplist
-keymap.set("n", "<C-m>", "<C-i>", opts)
+      from = "<D-s>",
+      to = function()
+        vim.cmd([[w]])
+        vim.cmd([[stopinsert]])
+      end,
+      mode = mode_ni,
+    },
+    {
+      from = "<D-n>",
+      to = function()
+        vim.cmd([[new]])
+      end,
+      mode = mode_ni,
+    },
+    {
+      from = "<D-c>",
+      to = '"+ygv<esc>',
+      mode = mode_v,
+    },
+    {
+      from = "<D-z>",
+      to = function()
+        vim.cmd([[undo]])
+      end,
+      mode = mode_ni,
+    },
 
--- New tab
-keymap.set("n", "te", ":tabedit")
-keymap.set("n", "<tab>", ":tabnext<Return>", opts)
-keymap.set("n", "<s-tab>", ":tabprev<Return>", opts)
--- Split window
-keymap.set("n", "ss", ":split<Return>", opts)
-keymap.set("n", "sv", ":vsplit<Return>", opts)
--- Move window
-keymap.set("n", "sh", "<C-w>h")
-keymap.set("n", "sk", "<C-w>k")
-keymap.set("n", "sj", "<C-w>j")
-keymap.set("n", "sl", "<C-w>l")
+    {
+      from = "<D-S-z>",
+      to = function()
+        vim.cmd([[redo]])
+      end,
+      mode = mode_ni,
+    },
+    {
+      from = "<M-backspace>",
+      to = "<C-w>",
+      mode = mode_i,
+    },
+    { from = "<D-a>", to = "<ESC>gg<s-v>G", mode = mode_ni },
+    {
+      from = "<M-left>",
+      to = "<ESC>bi",
+      mode = mode_ni,
+    },
+    {
+      from = "<M-right>",
+      to = "<ESC>ea",
+      mode = mode_ni,
+    },
+    {
+      from = "<M-up>",
+      to = "<ESC>:m .-2<CR>==gi",
+      mode = mode_ni,
+    },
+    {
+      from = "<M-down>",
+      to = "<ESC>:m .+1<CR>==gi",
+      mode = mode_ni,
+    },
 
--- Resize window
-keymap.set("n", "<C-w><left>", "<C-w><")
-keymap.set("n", "<C-w><right>", "<C-w>>")
-keymap.set("n", "<C-w><up>", "<C-w>+")
-keymap.set("n", "<C-w><down>", "<C-w>-")
+    {
+      from = "<D-.>",
+      to = vim.lsp.buf.code_action,
+      mode = mode_nv,
+    },
+    -- {
+    --   from = "<D-f>",
+    --   to = function()
+    --     require("spectre").open_file_search({ select_word = false })
+    --   end,
+    -- },
+    {
+      from = "<D-f>",
+      to = "<nop>",
+      mode = mode_i,
+    },
+    {
+      from = "<D-.>",
+      to = function()
+        vim.cmd("stopinsert")
+        vim.lsp.buf.code_action({
+          context = {
+            only = {
+              "source",
+            },
+            diagnostics = {},
+          },
+        })
+      end,
+      mode = mode_i,
+    },
+    -- {
+    --   from = "<D-,>",
+    --   to = function()
+    --     require("telescope.builtin").live_grep()
+    --   end,
+    --   mode = mode_ni,
+    -- },
 
--- Diagnostics
-keymap.set("n", "<C-j>", function()
-  vim.diagnostic.goto_next()
-end, opts)
+    {
+      from = "<D-/>",
+      to = function()
+        local ok, api = pcall(require, "Comment.api")
+        if not ok then
+          return
+        end
 
+        local esc = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
 
-keymap.set("n", "<leader>r", function()
-  require("rivtian.hsl").replaceHexWithHSL()
-end)
+        vim.api.nvim_feedkeys(esc, "nx", false)
+        api.toggle.linewise(vim.fn.visualmode())
+      end,
+      mode = mode_v,
+    },
 
-keymap.set("n", "<leader>i", function()
-  require("rivtian.lsp").toggleInlayHints()
-end)
+    {
+      from = "<D-/>",
+      to = function()
+        local ok, api = pcall(require, "Comment.api")
+        if not ok then
+          return
+        end
+        api.toggle.linewise.current()
+      end,
+      mode = mode_ni,
+    },
+    {
+      from = "<F5>",
+      to = function()
+        -- format code
+        vim.lsp.buf.format()
+      end,
+      mode = mode_ni,
+    },
+
+    {
+      from = "<S-D-f>",
+      to = function()
+        -- format code
+        vim.lsp.buf.format()
+      end,
+      mode = mode_ni,
+    },
+    {
+      from = "<M-D-s>",
+      to = function()
+        vim.cmd([[wa]])
+      end,
+      mode = mode_ni,
+    },
+    {
+      from = "<D-backspace>",
+      to = "<esc>cc",
+      mode = mode_i,
+    },
+  })
+end
+
+if vim.g.neovide then
+  vim.keymap.set("n", "<D-v>", '"+P')           -- Paste normal mode
+  vim.keymap.set("v", "<D-v>", '"+P')           -- Paste visual mode
+  vim.keymap.set("c", "<D-v>", "<C-R>+")        -- Paste command mode
+  vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli')   -- Paste insert mode
+
+  -- Allow clipboard copy paste in neovim
+  vim.api.nvim_set_keymap("", "<D-v>", "+p<CR>", { noremap = true, silent = true })
+  vim.api.nvim_set_keymap("!", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+  vim.api.nvim_set_keymap("t", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+  vim.api.nvim_set_keymap("v", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+  nmappings = vim.list_extend(nmappings, {
+    {
+      -- @see https://github.com/neovide/neovide/issues/1237
+      from = "<D-f>",
+      to = function()
+        -- format code
+        vim.lsp.buf.format()
+      end,
+      mode = mode_ni,
+    },
+  })
+end
+
+for _, mapping in ipairs(nmappings) do
+  vim.keymap.set(
+    mapping.mode or "n",
+    mapping.from,
+    mapping.to,
+    { noremap = mapping.noremap or true, silent = true, desc = mapping.desc }
+  )
+end
+
+-- delete lazynvim built-in keymaps
+vim.keymap.del({ "n", "x" }, "j")
+vim.keymap.del({ "n", "x" }, "k")
+
+vim.api.nvim_set_keymap("n", "j", "<Plug>(accelerated_jk_gj)", {})
+vim.api.nvim_set_keymap("n", "k", "<Plug>(accelerated_jk_gk)", {})
+
